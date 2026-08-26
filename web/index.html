@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#f5f0e6" />
+  <meta name="description" content="An explainable ARV supply-chain pricing, freight benchmarking, and exception intelligence portfolio project." />
+  <title>Landed — ARV Supply Chain Pricing Intelligence</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="route-rail">
+    <div class="rail-brand"><span>LD</span><strong>LANDED</strong></div>
+    <nav aria-label="Workspace navigation">
+      <button class="rail-link active" data-view="network" aria-label="Network pulse"><span>01</span><b>Network</b></button>
+      <button class="rail-link" data-view="quote" aria-label="Quote lab"><span>02</span><b>Quote lab</b></button>
+      <button class="rail-link" data-view="drivers" aria-label="Cost drivers"><span>03</span><b>Drivers</b></button>
+      <button class="rail-link" data-view="exceptions" aria-label="Exception manifest"><span>04</span><b>Exceptions</b></button>
+      <button class="rail-link" data-view="audit" aria-label="Data audit"><span>05</span><b>Audit</b></button>
+    </nav>
+    <div class="rail-status"><i></i><span>MODEL<br/>READY</span></div>
+  </aside>
+
+  <main>
+    <header class="masthead">
+      <div class="mast-copy"><p class="kicker" id="view-kicker">ROUTE BOARD / HISTORICAL SNAPSHOT</p><h1 id="view-title">Network pulse</h1><p class="deck">A pricing and logistics decision workspace built from 10,324 global health shipment line items.</p></div>
+      <div class="mast-actions"><button class="outline-button" id="export-view">EXPORT VIEW ↓</button><button class="solid-button" id="open-ai">OPEN AI DISPATCH ↗</button></div>
+    </header>
+
+    <section class="scope-strip" aria-label="Global dashboard filters">
+      <span class="strip-label">ACTIVE MANIFEST</span>
+      <label>PRODUCT<select id="product-filter"><option>All</option></select></label>
+      <label>MODE<select id="mode-filter"><option>All</option></select></label>
+      <label>COUNTRY<select id="country-filter"><option>All</option></select></label>
+      <div class="scope-stamp"><strong id="scope-count">—</strong><span>ELIGIBLE LINES</span></div>
+      <button class="link-button" id="reset-scope">RESET</button>
+    </section>
+
+    <section class="view active" id="network-view">
+      <div class="notice"><span>HISTORICAL DATA · 2006–2015</span><p>Use this as a reproducible pricing-analytics demonstration, not as a current market quote.</p><button class="link-button" data-jump="audit">WHY THIS MATTERS →</button></div>
+      <section class="metric-grid" id="metric-grid"></section>
+      <section class="network-grid">
+        <article class="module trend-module"><header><div><p class="module-index">A / MOVEMENT</p><h2>Freight spend and shipment volume</h2></div><div class="chart-key"><i class="blue"></i>Freight spend <i class="orange"></i>Shipments</div></header><canvas id="annual-chart" aria-label="Annual freight spend and shipment count"></canvas><footer><span id="annual-caption">Selected manifest</span><button class="link-button" data-jump="drivers">OPEN DRIVER MODEL →</button></footer></article>
+        <article class="module dispatch-module"><div class="dispatch-head"><span class="dispatch-mark">AI</span><div><p class="module-index">B / DISPATCH NOTE</p><strong>EVIDENCE-BOUNDED</strong></div></div><h2 id="dispatch-headline">Reading the active manifest…</h2><p id="dispatch-copy"></p><div id="dispatch-evidence" class="dispatch-evidence"></div><button class="inverse-button" id="dispatch-to-quote">SIMULATE A QUOTE →</button></article>
+      </section>
+      <section class="lower-grid">
+        <article class="module ranking-module"><header><div><p class="module-index">C / LANE ECONOMICS</p><h2>Highest captured freight spend</h2></div><span class="micro-label">TOP COUNTRIES</span></header><div id="country-ranking"></div></article>
+        <article class="module mode-module"><header><div><p class="module-index">D / MODE BENCHMARK</p><h2>Cost and service by shipment mode</h2></div></header><div id="mode-cards" class="mode-cards"></div></article>
+      </section>
+    </section>
+
+    <section class="view" id="quote-view">
+      <div class="section-lead"><div><p class="kicker">EMPIRICAL QUOTE BENCHMARK</p><h2>Build a defendable freight range.</h2><p>Compare a proposed shipment against historical peers on the same country-mode lane. No external price is invented.</p></div><span class="big-index">02</span></div>
+      <div class="quote-layout">
+        <form class="quote-controls module" id="quote-form">
+          <div class="form-title"><span>INPUT CARD</span><strong>PROPOSED SHIPMENT</strong></div>
+          <label>Destination country<select id="scenario-country"></select></label>
+          <label>Shipment mode<select id="scenario-mode"></select></label>
+          <label>Shipment weight <output id="weight-output"></output><input type="range" id="scenario-weight" min="25" max="25000" step="25" value="1500"/></label>
+          <label>Item value <output id="value-output"></output><input type="range" id="scenario-value" min="1000" max="1000000" step="1000" value="100000"/></label>
+          <label>Line-item quantity <output id="quantity-output"></output><input type="range" id="scenario-quantity" min="100" max="150000" step="100" value="10000"/></label>
+          <button class="solid-button" type="submit">RECALCULATE QUOTE</button>
+        </form>
+        <section class="quote-ticket module">
+          <div class="ticket-top"><span>LANDED / PEER QUOTE</span><strong id="quote-id">LQ-0001</strong></div>
+          <div class="ticket-route"><div><span>FROM</span><strong>GLOBAL SUPPLY</strong></div><i>→</i><div><span>TO</span><strong id="ticket-country">—</strong></div></div>
+          <div class="quote-number"><span>EXPECTED FREIGHT</span><strong id="expected-cost">—</strong><small id="expected-range">—</small></div>
+          <div class="quote-grid"><div><span>PEER $ / KG</span><strong id="peer-rate">—</strong></div><div><span>FREIGHT / VALUE</span><strong id="quote-ratio">—</strong></div><div><span>PEER SAMPLE</span><strong id="peer-sample">—</strong></div><div><span>CONFIDENCE</span><strong id="quote-confidence">—</strong></div></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </section>
+        <aside class="quote-ai module"><div class="ai-label"><span>AI</span>ASSUMPTION CHALLENGER</div><h2 id="quote-ai-headline">Select a lane to begin.</h2><p id="quote-ai-copy"></p><div id="quote-alternatives"></div><code id="quote-citation">—</code></aside>
+      </div>
+    </section>
+
+    <section class="view" id="drivers-view">
+      <div class="section-lead"><div><p class="kicker">EXPLAINABLE FREIGHT MODEL</p><h2>What moves predicted freight cost?</h2><p>A Random Forest model is evaluated chronologically so the dashboard can distinguish fit from forward-looking generalization.</p></div><span class="big-index">03</span></div>
+      <section class="model-strip" id="model-strip"></section>
+      <div class="driver-grid">
+        <article class="module importance-module"><header><div><p class="module-index">A / FEATURE IMPORTANCE</p><h2>Aggregated model drivers</h2></div><span class="micro-label">LOG FREIGHT TARGET</span></header><canvas id="importance-chart"></canvas><footer><span>Importance is predictive association, not causal impact.</span></footer></article>
+        <article class="module relationship-module"><header><div><p class="module-index">B / RELATIONSHIP</p><h2>Weight vs. freight cost</h2></div><span class="micro-label">LOG SCALE · SAMPLE</span></header><canvas id="relationship-chart"></canvas><footer><span id="relationship-caption"></span></footer></article>
+      </div>
+      <article class="module method-module"><div><span>METHOD CARD</span><strong id="model-method"></strong></div><p>Numeric drivers: shipment weight, item value, line-item quantity, and unit price. Context drivers: country, mode, fulfillment path, incoterm, product group, and classification.</p><button class="link-button" data-jump="audit">INSPECT ELIGIBILITY →</button></article>
+    </section>
+
+    <section class="view" id="exceptions-view">
+      <div class="section-lead"><div><p class="kicker">ROBUST PEER DEVIATION</p><h2>Exception manifest</h2><p>Investigate high freight-per-kilogram or high freight-to-value lines relative to comparable mode and weight cohorts.</p></div><button class="solid-button" id="download-exceptions">DOWNLOAD CSV ↓</button></div>
+      <section class="exception-summary" id="exception-summary"></section>
+      <article class="module exception-table-module"><div class="table-controls"><div class="severity-filters"><button class="active" data-exception="All">ALL</button><button data-exception="Extreme">EXTREME</button><button data-exception="Review">REVIEW</button></div><input id="exception-search" placeholder="Search country, mode, vendor or molecule"/><span id="exception-count">—</span></div><div class="table-wrap"><table><thead><tr><th>Flag</th><th>Line</th><th>Lane</th><th>Mode</th><th>Weight</th><th>Freight</th><th>Peer index</th><th>Reason</th></tr></thead><tbody id="exception-body"></tbody></table></div><div class="table-foot"><span id="table-status"></span><button class="link-button" id="show-more">SHOW 25 MORE ↓</button></div></article>
+    </section>
+
+    <section class="view" id="audit-view">
+      <div class="section-lead"><div><p class="kicker">DATA QUALITY & GOVERNANCE</p><h2>Trust center</h2><p>The limitations are part of the product: every cost metric exposes eligibility and every AI statement remains inside reviewed evidence.</p></div><span class="big-index">05</span></div>
+      <section class="quality-grid" id="quality-grid"></section>
+      <div class="audit-grid">
+        <article class="module lineage-module"><p class="module-index">A / REPRODUCIBLE LINEAGE</p><h2>Source to decision</h2><div class="lineage"><div><b>01</b><strong>CSV snapshot</strong><span>10,324 line items</span></div><i>→</i><div><b>02</b><strong>Quality rules</strong><span>Validity & eligibility</span></div><i>→</i><div><b>03</b><strong>Feature layer</strong><span>6,162 complete rows</span></div><i>→</i><div><b>04</b><strong>Decision products</strong><span>Benchmarks, model, AI</span></div></div></article>
+        <article class="module contract-module"><p class="module-index">B / AI CONTRACT</p><h2>Grounded by construction</h2><ul><li><strong>Bounded context</strong><span>Only supplied CSV aggregates and peer lanes.</span></li><li><strong>No market-price invention</strong><span>Quote ranges are historical empirical benchmarks.</span></li><li><strong>Visible sample size</strong><span>Confidence reflects comparable-lane coverage.</span></li><li><strong>Hypothesis labeling</strong><span>Suggested causes remain validation tasks.</span></li></ul></article>
+      </div>
+      <article class="module dictionary-module"><div><p class="module-index">C / METRIC CONTRACT</p><h2>Definitions you can defend</h2></div><div id="metric-dictionary"></div></article>
+    </section>
+  </main>
+
+  <aside class="ai-drawer" id="ai-drawer" aria-hidden="true"><header><div><span>AI</span><div><strong>Dispatch intelligence</strong><small id="ai-scope">Active manifest</small></div></div><button id="close-ai">×</button></header><div class="ai-log" id="ai-log"><div class="ai-bubble"><b>LANDED AI / GROUNDED</b><p>Ask about cost, shipment modes, countries, exceptions, or model drivers. Numerical answers will show their evidence record.</p></div></div><div class="prompt-row"><button>Where is freight pressure highest?</button><button>Compare shipment modes</button><button>What should I investigate?</button></div><form id="ai-form"><input id="ai-input" placeholder="Ask a pricing or logistics question…"/><button>ANALYZE</button></form></aside>
+  <div class="backdrop" id="backdrop"></div><div class="toast-zone" id="toast-zone"></div>
+  <script src="data.js"></script><script src="app.js"></script>
+</body>
+</html>
