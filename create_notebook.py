@@ -1,0 +1,28 @@
+from pathlib import Path
+import nbformat as nbf
+
+root = Path(__file__).resolve().parent
+nb = nbf.v4.new_notebook()
+nb["metadata"]["kernelspec"] = {"display_name": "Python 3", "language": "python", "name": "python3"}
+nb["metadata"]["language_info"] = {"name": "python", "version": "3"}
+nb["cells"] = [
+    nbf.v4.new_markdown_cell("""# ARV Supply Chain Pricing Intelligence\n\n## tl;dr\n\nThis notebook reproduces the dataset audit and decision metrics behind the portfolio dashboard. The dataset contains 10,324 shipment line items from 2006-2015; 8,550 are ARV records. Freight and weight are materially incomplete, so freight benchmarks and modeling use only rows with positive, captured values. The production pipeline records model performance and cost drivers in `data/processed/pricing_intelligence.json`."""),
+    nbf.v4.new_markdown_cell("""## Context & Methods\n\nThe analytical grain is one shipment line item. The project separates procurement value, freight cost, and landed cost; it does not treat medication value as revenue.\n\n### Key Assumptions\n- A shipment is on time when delivered on or before its scheduled date.\n- Freight-per-kilogram requires positive captured freight and weight.\n- Historical public-health logistics data demonstrates the workflow but should not be presented as current market pricing.\n- Model metrics come from a chronological 80/20 evaluation created by `pipeline.py`."""),
+    nbf.v4.new_code_cell("""from pathlib import Path\nimport json\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nROOT = Path.cwd().parent if Path.cwd().name == 'notebooks' else Path.cwd()\nRAW = ROOT / 'data/raw/Supply_Chain_Shipment_Pricing_Dataset.csv'\nMODEL = ROOT / 'data/processed/pricing_intelligence.json'\nprint('Source:', RAW)"""),
+    nbf.v4.new_markdown_cell("## Data\n\n### 1. Load and normalize the source"),
+    nbf.v4.new_code_cell("""df = pd.read_csv(RAW, low_memory=False)\nfor col in ['line item quantity','line item value','pack price','unit price','weight (kilograms)','freight cost (usd)','line item insurance (usd)']:\n    df[col] = pd.to_numeric(df[col], errors='coerce')\nfor col in ['scheduled delivery date','delivered to client date','delivery recorded date']:\n    df[col] = pd.to_datetime(df[col], errors='coerce')\ndf['year'] = df['delivered to client date'].dt.year\ndf['delivery_variance_days'] = (df['delivered to client date'] - df['scheduled delivery date']).dt.days\ndf['on_time'] = df['delivery_variance_days'] <= 0\ndf['freight_per_kg'] = np.where(df['weight (kilograms)'] > 0, df['freight cost (usd)'] / df['weight (kilograms)'], np.nan)\ndf.shape"""),
+    nbf.v4.new_markdown_cell("### 2. Validate grain, completeness, and domain rules"),
+    nbf.v4.new_code_cell("""quality = pd.DataFrame({\n    'check': ['Unique IDs','Exact duplicate rows','Missing freight cost','Missing weight','Non-positive item value','Non-positive unit price'],\n    'result': [df['id'].is_unique, int(df.duplicated().sum()), df['freight cost (usd)'].isna().mean(), df['weight (kilograms)'].isna().mean(), int(df['line item value'].le(0).sum()), int(df['unit price'].le(0).sum())]\n})\nquality"""),
+    nbf.v4.new_markdown_cell("## Results\n\n### 3. Review decision metrics"),
+    nbf.v4.new_code_cell("""valid = df[df['freight cost (usd)'].gt(0) & df['weight (kilograms)'].gt(0)].copy()\nsummary = pd.Series({\n    'rows': len(df),\n    'ARV rows': int(df['product group'].eq('ARV').sum()),\n    'countries': df['country'].nunique(),\n    'procurement value': df['line item value'].sum(),\n    'captured freight spend': valid['freight cost (usd)'].sum(),\n    'median freight per kg': valid['freight_per_kg'].median(),\n    'on-time rate': df['on_time'].mean(),\n})\nsummary"""),
+    nbf.v4.new_markdown_cell("### 4. Compare logistics modes"),
+    nbf.v4.new_code_cell("""mode_summary = valid.groupby('shipment mode').agg(shipments=('id','count'), median_freight_per_kg=('freight_per_kg','median'), freight_spend=('freight cost (usd)','sum')).sort_values('shipments',ascending=False)\nmode_summary"""),
+    nbf.v4.new_code_cell("""ax = mode_summary['median_freight_per_kg'].sort_values().plot.barh(figsize=(8,4), color='#ff6b35', title='Median freight cost per kilogram by shipment mode')\nax.set_xlabel('USD per kg'); ax.set_ylabel(''); plt.tight_layout(); plt.show()"""),
+    nbf.v4.new_markdown_cell("### 5. Inspect the evaluated predictive model"),
+    nbf.v4.new_code_cell("""payload = json.loads(MODEL.read_text())\nmodel = payload['model']\npd.Series({k:v for k,v in model.items() if k not in ['drivers','method']})"""),
+    nbf.v4.new_code_cell("""drivers = pd.DataFrame(model['drivers']).head(8).sort_values('importance')\nax = drivers.plot.barh(x='feature', y='importance', legend=False, figsize=(8,4), color='#2142ff', title='Freight-cost model driver importance')\nax.set_xlabel('Aggregated feature importance'); ax.set_ylabel(''); plt.tight_layout(); plt.show()"""),
+    nbf.v4.new_markdown_cell("""## Takeaways\n\n1. Weight is the dominant predictive feature in the evaluated freight-cost model; lane, shipment mode, item value, and incoterm add meaningful context.\n2. Missing freight and weight values are the largest data-quality constraint. Dashboard benchmarks therefore expose eligible sample size and never silently impute those fields.\n3. Freight-per-kilogram and freight-as-percent-of-item-value answer different decisions and should not be merged into one generic “shipping cost” KPI.\n4. The dashboard's AI layer is deterministic and evidence-bounded: it explains peer benchmarks, reason codes, and scenario deltas without inventing external market prices."""),
+]
+out = root / "notebooks/01_arv_pricing_analysis.ipynb"
+nbf.write(nb, out)
+print(out)
