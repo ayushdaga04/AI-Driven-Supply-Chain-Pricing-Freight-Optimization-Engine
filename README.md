@@ -69,14 +69,6 @@ project_3_arv_pricing_intelligence/
 
 Python, Pandas, NumPy, scikit-learn, Jupyter, HTML, CSS, JavaScript, Canvas charts, deterministic AI reasoning, explainable benchmarking, data-quality testing, and GitHub Pages-ready packaging.
 
-## Resume-ready title
-
-**Explainable AI ARV Supply Chain Pricing & Freight Benchmarking Engine**
-
-## Resume bullets
-
-- Re-engineered 10,324 historical global-health shipment records into a governed pricing feature layer and interactive decision product covering freight economics, service performance, comparable-lane quote ranges, and robust exception investigation.
-- Developed and chronologically evaluated a Random Forest freight-cost model (0.673 log-scale R²) and an evidence-bounded AI assistant that explains model drivers, benchmarks quotes using visible peer samples, and produces cited recommendations without inventing market prices.
 
 ## Original-work continuity
 
